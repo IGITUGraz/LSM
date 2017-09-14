@@ -5,6 +5,8 @@ import numpy.ma as ma
 from lsm.nest import LSM
 from lsm.utils import poisson_generator
 
+from lsm.nest.visualize import Plotter
+
 # convention: all times in [ms], except stated otherwise
 
 
@@ -57,6 +59,7 @@ def main():
     nest.SetKernelStatus({'print_time': True, 'local_num_threads': 11})
 
     sim_time = 200000
+    sim_time = 10000
 
     # stimulus
     stim_interval = 300
@@ -76,6 +79,8 @@ def main():
 
     inject_spikes(inp_spikes, lsm.inp_nodes)
 
+    pl = Plotter(lsm)
+
     # SIMULATE
     nest.Simulate(sim_time)
 
@@ -94,6 +99,9 @@ def main():
     train_targets, test_targets = targets[:n_examples_train], targets[n_examples_train:]
 
     readout_weights = lsm.compute_readout_weights(train_states, train_targets, reg_fact=5.0)
+
+    pl.visualize(stim_times=stim_times, readout_times=readout_times, weights=readout_weights,
+                 weight_cols=4, states=states)
 
     def classify(prediction):
         return (prediction >= 0.5).astype(int)
