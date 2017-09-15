@@ -50,21 +50,20 @@ def connect_tsodyks(nodes_E, nodes_I):
                 "x": get_x_0(U, tau_rec, tau_fac),
                 }
 
-    def connect(src, trg, J, model, n_syn, syn_param):
-        nest.CopyModel("tsodyks_synapse", model, syn_param)
-        if J < 0:
-            nest.Connect(src, trg,
-                         {'rule': 'fixed_indegree', 'indegree': n_syn},
-                         {'model': model, 'delay': delay,
-                          'weight': {"distribution": "normal_clipped", "mu": J, "sigma": 0.7 * abs(J),
-                                     "low" if J >= 0 else "high": 0.
-                                     },
-                          })
+    def connect(src, trg, J, n_syn, syn_param):
+        nest.Connect(src, trg,
+                     {'rule': 'fixed_indegree', 'indegree': n_syn},
+                     {'model': 'tsodyks_synapse', 'delay': delay,
+                      'weight': {"distribution": "normal_clipped", "mu": J, "sigma": 0.7 * abs(J),
+                                 "low" if J >= 0 else "high": 0.
+                                 },
+                      **syn_param
+                      })
 
-    connect(nodes_E, nodes_E, J_EE, "EE", n_syn_exc, gen_syn_param(tau_psc=2.0, tau_fac=1.0, tau_rec=813., U=0.59))
-    connect(nodes_E, nodes_I, J_EI, "EI", n_syn_exc, gen_syn_param(tau_psc=2.0, tau_fac=1790.0, tau_rec=399., U=0.049))
-    connect(nodes_I, nodes_E, J_IE, "IE", n_syn_inh, gen_syn_param(tau_psc=2.0, tau_fac=376.0, tau_rec=45., U=0.016))
-    connect(nodes_I, nodes_I, J_II, "II", n_syn_inh, gen_syn_param(tau_psc=2.0, tau_fac=21.0, tau_rec=706., U=0.25))
+    connect(nodes_E, nodes_E, J_EE, n_syn_exc, gen_syn_param(tau_psc=2.0, tau_fac=1.0, tau_rec=813., U=0.59))
+    connect(nodes_E, nodes_I, J_EI, n_syn_exc, gen_syn_param(tau_psc=2.0, tau_fac=1790.0, tau_rec=399., U=0.049))
+    connect(nodes_I, nodes_E, J_IE, n_syn_inh, gen_syn_param(tau_psc=2.0, tau_fac=376.0, tau_rec=45., U=0.016))
+    connect(nodes_I, nodes_I, J_II, n_syn_inh, gen_syn_param(tau_psc=2.0, tau_fac=21.0, tau_rec=706., U=0.25))
 
 
 def inject_noise(nodes_E, nodes_I):
