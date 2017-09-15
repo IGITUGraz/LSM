@@ -3,7 +3,7 @@ import numpy as np
 import numpy.ma as ma
 
 from lsm.nest import LSM
-from lsm.nest.utils import poisson_generator
+from lsm.utils import poisson_generator
 
 # convention: all times in [ms], except stated otherwise
 

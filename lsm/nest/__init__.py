@@ -2,7 +2,8 @@ import nest
 import numpy as np
 import pylab
 
-from lsm.nest import utils
+from lsm.nest.utils import get_spike_times
+from lsm.utils import windowed_events
 
 
 def create_iaf_psc_exp(n_E, n_I):
@@ -99,7 +100,7 @@ class LSM(object):
         nest.Connect(self.rec_nodes, self._rec_detector)
 
     def get_states(self, times, tau):
-        spike_times = utils.get_spike_times(self._rec_detector)
+        spike_times = get_spike_times(self._rec_detector)
         return LSM._get_liquid_states(spike_times, times, tau)
 
     @staticmethod
@@ -132,6 +133,6 @@ class LSM(object):
             t_window = 3 * tau
         for n, spt in enumerate(spike_times):
             # TODO state order is reversed, as windowed_events are provided in reversed order
-            for i, (t, window_spikes) in enumerate(utils.windowed_events(spt, times, t_window)):
+            for i, (t, window_spikes) in enumerate(windowed_events(spt, times, t_window)):
                 states[n_times - i - 1, n] = sum(np.exp(-(t - window_spikes) / tau))
         return states
