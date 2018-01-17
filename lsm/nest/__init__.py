@@ -53,12 +53,11 @@ def connect_tsodyks(nodes_E, nodes_I):
     def connect(src, trg, J, n_syn, syn_param):
         nest.Connect(src, trg,
                      {'rule': 'fixed_indegree', 'indegree': n_syn},
-                     {'model': 'tsodyks_synapse', 'delay': delay,
-                      'weight': {"distribution": "normal_clipped", "mu": J, "sigma": 0.7 * abs(J),
-                                 "low" if J >= 0 else "high": 0.
-                                 },
-                      **syn_param
-                      })
+                     dict({'model': 'tsodyks_synapse', 'delay': delay,
+                           'weight': {"distribution": "normal_clipped", "mu": J, "sigma": 0.7 * abs(J),
+                                      "low" if J >= 0 else "high": 0.
+                           }},
+                          **syn_param))
 
     connect(nodes_E, nodes_E, J_EE, n_syn_exc, gen_syn_param(tau_psc=2.0, tau_fac=1.0, tau_rec=813., U=0.59))
     connect(nodes_E, nodes_I, J_EI, n_syn_exc, gen_syn_param(tau_psc=2.0, tau_fac=1790.0, tau_rec=399., U=0.049))

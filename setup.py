@@ -10,8 +10,7 @@ setup(name='lsm',
       packages=['lsm'],
       install_requires=[  # TODO check dependencies
         'numpy',
-        'scipy',
-        'nest',  # TODO use `dependency_links` instead
+        'scipy'
       ],
       zip_safe=False,
       )
