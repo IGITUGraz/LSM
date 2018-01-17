@@ -29,10 +29,6 @@ def generate_stimulus_xor(stim_times, gen_burst, n_inputs=2):
     return inp_spikes, targets
 
 
-def calc_error(prediction, labels):
-    return sum(abs(prediction - labels)) / len(labels)
-
-
 def inject_spikes(inp_spikes, neuron_targets):
     spike_generators = nest.Create("spike_generator", len(inp_spikes))
 
