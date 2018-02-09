@@ -131,6 +131,6 @@ class LSM(object):
             t_window = 3 * tau
         for n, spt in enumerate(spike_times):
             # TODO state order is reversed, as windowed_events are provided in reversed order
-            for i, (t, window_spikes) in enumerate(windowed_events(spt, times, t_window)):
+            for i, (t, window_spikes) in enumerate(windowed_events(np.array(spt), times, t_window)):
                 states[n_times - i - 1, n] = sum(np.exp(-(t - window_spikes) / tau))
         return states
