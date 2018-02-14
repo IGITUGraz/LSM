@@ -66,14 +66,22 @@ def connect_tsodyks(nodes_E, nodes_I):
 
 
 def inject_noise(nodes_E, nodes_I):
-    p_rate = 100.0  # this is used to simulate input from neurons around the populations
-    J_noise = 5.0  # strength of synapses from noise input [pA]
+    p_rate = 25.0  # this is used to simulate input from neurons around the populations
+    J_noise = 1.0  # strength of synapses from noise input [pA]
     delay = dict(distribution='normal_clipped', mu=10., sigma=20., low=3., high=200.)
 
     noise = nest.Create('poisson_generator', 1, {'rate': p_rate})
 
-    nest.CopyModel('static_synapse_hom_w', 'excitatory_noise', {'weight': J_noise})
-    nest.Connect(noise, nodes_E + nodes_I, syn_spec={'model': 'excitatory_noise', 'delay': delay})
+    nest.Connect(noise, nodes_E + nodes_I, syn_spec={'model': 'static_synapse',
+                                                     'weight': {
+                                                         'distribution': 'normal',
+                                                         'mu': J_noise,
+                                                         'sigma': 0.7 * J_noise
+                                                     },
+                                                     'delay': dict(distribution='normal_clipped',
+                                                                   mu=10., sigma=20.,
+                                                                   low=3., high=200.)
+    })
 
 
 class LSM(object):
