@@ -106,7 +106,7 @@ class LSM(object):
         nest.Connect(self.rec_nodes, self._rec_detector)
 
     def get_states(self, times, tau):
-        spike_times = get_spike_times(self._rec_detector)
+        spike_times = get_spike_times(self._rec_detector, self.rec_nodes)
         return LSM._get_liquid_states(spike_times, times, tau)
 
     @staticmethod
