@@ -53,12 +53,11 @@ def connect_tsodyks(nodes_E, nodes_I):
     def connect(src, trg, J, n_syn, syn_param):
         nest.Connect(src, trg,
                      {'rule': 'fixed_indegree', 'indegree': n_syn},
-                     {'model': 'tsodyks_synapse', 'delay': delay,
-                      'weight': {"distribution": "normal_clipped", "mu": J, "sigma": 0.7 * abs(J),
-                                 "low" if J >= 0 else "high": 0.
-                                 },
-                      **syn_param
-                      })
+                     dict({'model': 'tsodyks_synapse', 'delay': delay,
+                           'weight': {"distribution": "normal_clipped", "mu": J, "sigma": 0.7 * abs(J),
+                                      "low" if J >= 0 else "high": 0.
+                           }},
+                          **syn_param))
 
     connect(nodes_E, nodes_E, J_EE, n_syn_exc, gen_syn_param(tau_psc=2.0, tau_fac=1.0, tau_rec=813., U=0.59))
     connect(nodes_E, nodes_I, J_EI, n_syn_exc, gen_syn_param(tau_psc=2.0, tau_fac=1790.0, tau_rec=399., U=0.049))
@@ -67,14 +66,22 @@ def connect_tsodyks(nodes_E, nodes_I):
 
 
 def inject_noise(nodes_E, nodes_I):
-    p_rate = 100.0  # this is used to simulate input from neurons around the populations
-    J_noise = 5.0  # strength of synapses from noise input [pA]
+    p_rate = 25.0  # this is used to simulate input from neurons around the populations
+    J_noise = 1.0  # strength of synapses from noise input [pA]
     delay = dict(distribution='normal_clipped', mu=10., sigma=20., low=3., high=200.)
 
     noise = nest.Create('poisson_generator', 1, {'rate': p_rate})
 
-    nest.CopyModel('static_synapse_hom_w', 'excitatory_noise', {'weight': J_noise})
-    nest.Connect(noise, nodes_E + nodes_I, syn_spec={'model': 'excitatory_noise', 'delay': delay})
+    nest.Connect(noise, nodes_E + nodes_I, syn_spec={'model': 'static_synapse',
+                                                     'weight': {
+                                                         'distribution': 'normal',
+                                                         'mu': J_noise,
+                                                         'sigma': 0.7 * J_noise
+                                                     },
+                                                     'delay': dict(distribution='normal_clipped',
+                                                                   mu=10., sigma=20.,
+                                                                   low=3., high=200.)
+    })
 
 
 class LSM(object):
@@ -99,7 +106,7 @@ class LSM(object):
         nest.Connect(self.rec_nodes, self._rec_detector)
 
     def get_states(self, times, tau):
-        spike_times = get_spike_times(self._rec_detector)
+        spike_times = get_spike_times(self._rec_detector, self.rec_nodes)
         return LSM._get_liquid_states(spike_times, times, tau)
 
     @staticmethod
@@ -132,6 +139,6 @@ class LSM(object):
             t_window = 3 * tau
         for n, spt in enumerate(spike_times):
             # TODO state order is reversed, as windowed_events are provided in reversed order
-            for i, (t, window_spikes) in enumerate(windowed_events(spt, times, t_window)):
+            for i, (t, window_spikes) in enumerate(windowed_events(np.array(spt), times, t_window)):
                 states[n_times - i - 1, n] = sum(np.exp(-(t - window_spikes) / tau))
         return states
