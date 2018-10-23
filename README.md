@@ -11,4 +11,4 @@ operations on the reservoir.
 
 ## Usage
 
-After cloning this repository locally, run `pip install .` in the working copy.
+After cloning this repository locally, run `pip install .` in the working copy. Requires a working installation of the [NEST simulator](http://www.nest-initiative.org).
