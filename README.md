@@ -4,10 +4,12 @@ The Liquid State Machine (LSM) ([Maass et. al. 2002][1]) is a computational mode
 which uses the high-dimensional, complex dynamics of recurrent neural circuits to
 conduct memory-dependent readout operations on continuous input streams.
 
-[1]:http://dx.doi.org/10.1162/089976602760407955
+[1]: http://dx.doi.org/10.1162/089976602760407955
 
 This package provides a convenience wrapper for network construction, as well as typical
 operations on the reservoir.
+
+Note that the parameters used in this package are different from those in [Maass et. al. 2002].
 
 ## Usage
 
