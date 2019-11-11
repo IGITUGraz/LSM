@@ -9,7 +9,7 @@ conduct memory-dependent readout operations on continuous input streams.
 This package provides a convenience wrapper for network construction, as well as typical
 operations on the reservoir.
 
-Note that the parameters used in this package are different from those in [Maass et. al. 2002].
+Note that the parameters used in this package may be different from those in [Maass et. al. 2002].
 
 ## Usage
 
