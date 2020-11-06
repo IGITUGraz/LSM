@@ -109,7 +109,7 @@ def main():
     def eval_prediction(prediction, targets, label):
         n_fails = sum(abs(prediction - targets))
         n_total = len(targets)
-        print("mismatched {} examples: {:d}/{:d} [{:.1f}%]".format(label, n_fails, n_total, n_fails / n_total * 100))
+        print("mismatched {} examples: {:d}/{:d} [{:.1f}%]".format(label, n_fails, n_total, float(n_fails) / n_total * 100))
 
     eval_prediction(train_results, train_targets, "training")
     eval_prediction(test_results, test_targets, "test")
